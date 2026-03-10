@@ -1,0 +1,151 @@
+import java.util.*;
+
+class Patient {
+    private int id;
+    private String name;
+    private int age;
+
+    public Patient(int id, String name, int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+
+    public void display() {
+        System.out.println("Patient ID: " + id + " Name: " + name + " Age: " + age);
+    }
+}
+
+class Doctor {
+    private int id;
+    private String name;
+    private String specialization;
+
+    public Doctor(int id, String name, String specialization) {
+        this.id = id;
+        this.name = name;
+        this.specialization = specialization;
+    }
+
+    public int getId() { return id; }
+
+    public void display() {
+        System.out.println("Doctor ID: " + id + " Name: " + name +
+                " Specialization: " + specialization);
+    }
+}
+
+class Appointment {
+    private int appointmentId;
+    private Patient patient;
+    private Doctor doctor;
+    private String date;
+
+    public Appointment(int appointmentId, Patient patient, Doctor doctor, String date) {
+        this.appointmentId = appointmentId;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.date = date;
+    }
+
+    public void display() {
+        System.out.println("Appointment ID: " + appointmentId +
+                " | Patient: " + patient.getName() +
+                " | Doctor ID: " + doctor.getId() +
+                " | Date: " + date);
+    }
+}
+
+class HospitalService {
+
+    private Map<Integer, Patient> patients = new HashMap<>();
+    private Map<Integer, Doctor> doctors = new HashMap<>();
+    private List<Appointment> appointments = new ArrayList<>();
+
+    private int appointmentCounter = 1;
+
+    public void addPatient(Patient patient) {
+        patients.put(patient.getId(), patient);
+        System.out.println("Patient added successfully.");
+    }
+
+    public void addDoctor(Doctor doctor) {
+        doctors.put(doctor.getId(), doctor);
+        System.out.println("Doctor added successfully.");
+    }
+
+    public void bookAppointment(int patientId, int doctorId, String date) {
+
+        Patient patient = patients.get(patientId);
+        Doctor doctor = doctors.get(doctorId);
+
+        if (patient == null || doctor == null) {
+            System.out.println("Invalid patient or doctor ID");
+            return;
+        }
+
+        Appointment appointment =
+                new Appointment(appointmentCounter++, patient, doctor, date);
+
+        appointments.add(appointment);
+
+        System.out.println("Appointment booked successfully.");
+        appointment.display();
+    }
+
+    public void generateBill(int patientId, double consultationFee) {
+
+        Patient patient = patients.get(patientId);
+
+        if (patient == null) {
+            System.out.println("Patient not found");
+            return;
+        }
+
+        System.out.println("\n------ BILL ------");
+        System.out.println("Patient: " + patient.getName());
+        System.out.println("Consultation Fee: " + consultationFee);
+        System.out.println("Total Amount: " + consultationFee);
+    }
+
+    public void showAppointments() {
+        System.out.println("\nAll Appointments:");
+        for (Appointment a : appointments) {
+            a.display();
+        }
+    }
+}
+
+public class HospitalManagementSystem {
+
+    public static void main(String[] args) {
+
+        HospitalService hospital = new HospitalService();
+
+        // Add Doctors
+        Doctor d1 = new Doctor(1, "Dr. Smith", "Cardiology");
+        Doctor d2 = new Doctor(2, "Dr. John", "Neurology");
+
+        hospital.addDoctor(d1);
+        hospital.addDoctor(d2);
+
+        // Add Patients
+        Patient p1 = new Patient(101, "Alice", 30);
+        Patient p2 = new Patient(102, "Bob", 40);
+
+        hospital.addPatient(p1);
+        hospital.addPatient(p2);
+
+        // Book Appointment
+        hospital.bookAppointment(101, 1, "20-Apr-2026");
+
+        // Show appointments
+        hospital.showAppointments();
+
+        // Generate bill
+        hospital.generateBill(101, 500);
+    }
+}
